@@ -24,6 +24,15 @@ export default function TimerDashboard() {
   const [timers, setTimers] = useState<Timer[]>([]);
   const [activeTimerId, setActiveTimerId] = useState<string | null>(null);
   const [editingTimer, setEditingTimer] = useState<Timer | null>(null);
+  const [editModal, setEditModal] = useState({
+    startType: 'manual', // 'manual' or 'scheduled'
+    scheduledTime: '',
+    durationMins: 10,
+    durationSecs: 0,
+    wrapUps: [
+      { color: '#facc15', time: 30, sound: 'bell' },
+    ],
+  });
   const [currentTime, setCurrentTime] = useState(new Date());
   const [devices, setDevices] = useState<Device[]>([
     {
@@ -49,6 +58,11 @@ export default function TimerDashboard() {
     }
   ]);
   const [timerFullscreen, setTimerFullscreen] = useState(false);
+  const wrapUpSounds = [
+    { label: 'Bell', value: 'bell' },
+    { label: 'Buzzer', value: 'buzzer' },
+    { label: 'Whistle', value: 'whistle' },
+  ];
 
   const activeTimer = timers.find(t => t.id === activeTimerId);
   const mainTimer = useTimer(activeTimer?.duration || 0);
@@ -213,62 +227,132 @@ export default function TimerDashboard() {
       </div>
       {/* Timer Settings Modal */}
       {editingTimer && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="bg-gray-900 border border-gray-700 rounded-lg p-8 w-full max-w-md shadow-2xl">
-            <h2 className="text-xl font-bold mb-6 text-white">Edit Timer</h2>
-            <div className="mb-4">
-              <label className="block text-gray-400 mb-1">Name</label>
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+          <div className="relative bg-gray-900 border border-gray-700 rounded-2xl p-10 w-full max-w-2xl shadow-2xl z-10">
+            <h2 className="text-3xl font-extrabold mb-8 text-white text-center">Edit Timer</h2>
+            <div className="mb-6">
+              <label className="block text-gray-400 mb-2 font-semibold">Name</label>
               <input
-                className="w-full px-3 py-2 rounded bg-gray-800 border border-gray-700 text-white focus:outline-none focus:border-blue-500"
+                className="w-full px-4 py-3 rounded bg-gray-800 border border-gray-700 text-white focus:outline-none focus:border-blue-500 text-lg"
                 value={editingTimer.name}
                 onChange={e => setEditingTimer({ ...editingTimer, name: e.target.value })}
               />
             </div>
-            <div className="mb-4 flex gap-2">
+            <div className="mb-6 flex gap-6">
               <div className="flex-1">
-                <label className="block text-gray-400 mb-1">Minutes</label>
-                <input
-                  type="number"
-                  min={0}
-                  className="w-full px-3 py-2 rounded bg-gray-800 border border-gray-700 text-white focus:outline-none focus:border-blue-500"
-                  value={Math.floor(editingTimer.duration / 60)}
-                  onChange={e => {
-                    const mins = parseInt(e.target.value, 10) || 0;
-                    setEditingTimer({ ...editingTimer, duration: mins * 60 + (editingTimer.duration % 60) });
-                  }}
-                />
+                <label className="block text-gray-400 mb-2 font-semibold">Start</label>
+                <select
+                  className="w-full px-4 py-3 rounded bg-gray-800 border border-gray-700 text-white focus:outline-none focus:border-blue-500 text-lg"
+                  value={editModal.startType}
+                  onChange={e => setEditModal(m => ({ ...m, startType: e.target.value }))}
+                >
+                  <option value="manual">Manual</option>
+                  <option value="scheduled">Scheduled</option>
+                </select>
+                {editModal.startType === 'scheduled' && (
+                  <input
+                    type="time"
+                    className="w-full mt-2 px-4 py-3 rounded bg-gray-800 border border-gray-700 text-white focus:outline-none focus:border-blue-500 text-lg"
+                    value={editModal.scheduledTime}
+                    onChange={e => setEditModal(m => ({ ...m, scheduledTime: e.target.value }))}
+                  />
+                )}
               </div>
               <div className="flex-1">
-                <label className="block text-gray-400 mb-1">Seconds</label>
-                <input
-                  type="number"
-                  min={0}
-                  max={59}
-                  className="w-full px-3 py-2 rounded bg-gray-800 border border-gray-700 text-white focus:outline-none focus:border-blue-500"
-                  value={(editingTimer.duration % 60).toString().padStart(2, '0')}
-                  onChange={e => {
-                    let secs = parseInt(e.target.value, 10) || 0;
-                    if (secs > 59) secs = 59;
-                    setEditingTimer({ ...editingTimer, duration: Math.floor(editingTimer.duration / 60) * 60 + secs });
-                  }}
-                />
+                <label className="block text-gray-400 mb-2 font-semibold">Duration</label>
+                <div className="flex gap-2">
+                  <input
+                    type="number"
+                    min={0}
+                    className="w-20 px-4 py-3 rounded bg-gray-800 border border-gray-700 text-white focus:outline-none focus:border-blue-500 text-lg text-right"
+                    value={Math.floor(editingTimer.duration / 60)}
+                    onChange={e => {
+                      const mins = parseInt(e.target.value, 10) || 0;
+                      setEditingTimer({ ...editingTimer, duration: mins * 60 + (editingTimer.duration % 60) });
+                    }}
+                  />
+                  <span className="text-lg text-gray-400 self-center">:</span>
+                  <input
+                    type="number"
+                    min={0}
+                    max={59}
+                    className="w-20 px-4 py-3 rounded bg-gray-800 border border-gray-700 text-white focus:outline-none focus:border-blue-500 text-lg text-right"
+                    value={(editingTimer.duration % 60).toString().padStart(2, '0')}
+                    onChange={e => {
+                      let secs = parseInt(e.target.value, 10) || 0;
+                      if (secs > 59) secs = 59;
+                      setEditingTimer({ ...editingTimer, duration: Math.floor(editingTimer.duration / 60) * 60 + secs });
+                    }}
+                  />
+                </div>
               </div>
             </div>
-            <div className="flex justify-end gap-2 mt-6">
+            <div className="mb-8">
+              <label className="block text-gray-400 mb-2 font-semibold">Wrap Up Actions</label>
+              {editModal.wrapUps.map((wrap, idx) => (
+                <div key={idx} className="flex items-center gap-3 mb-3">
+                  <input
+                    type="color"
+                    className="w-10 h-10 rounded border border-gray-700 bg-gray-800"
+                    value={wrap.color}
+                    onChange={e => setEditModal(m => {
+                      const wrapUps = [...m.wrapUps];
+                      wrapUps[idx].color = e.target.value;
+                      return { ...m, wrapUps };
+                    })}
+                  />
+                  <input
+                    type="number"
+                    min={1}
+                    className="w-20 px-3 py-2 rounded bg-gray-800 border border-gray-700 text-white focus:outline-none focus:border-blue-500 text-lg text-right"
+                    value={wrap.time}
+                    onChange={e => setEditModal(m => {
+                      const wrapUps = [...m.wrapUps];
+                      wrapUps[idx].time = parseInt(e.target.value, 10) || 1;
+                      return { ...m, wrapUps };
+                    })}
+                  />
+                  <span className="text-gray-400">seconds before end</span>
+                  <select
+                    className="px-3 py-2 rounded bg-gray-800 border border-gray-700 text-white focus:outline-none focus:border-blue-500 text-lg"
+                    value={wrap.sound}
+                    onChange={e => setEditModal(m => {
+                      const wrapUps = [...m.wrapUps];
+                      wrapUps[idx].sound = e.target.value;
+                      return { ...m, wrapUps };
+                    })}
+                  >
+                    {wrapUpSounds.map(s => (
+                      <option key={s.value} value={s.value}>{s.label}</option>
+                    ))}
+                  </select>
+                  <button
+                    className="ml-2 px-3 py-2 rounded bg-red-700 text-white border border-red-600 hover:bg-red-800"
+                    onClick={() => setEditModal(m => ({ ...m, wrapUps: m.wrapUps.filter((_, i) => i !== idx) }))}
+                  >Remove</button>
+                </div>
+              ))}
               <button
-                className="px-4 py-2 rounded bg-gray-700 text-gray-300 hover:bg-gray-600 border border-gray-600"
+                className="mt-2 px-4 py-2 rounded bg-green-700 text-white border border-green-600 hover:bg-green-800"
+                onClick={() => setEditModal(m => ({ ...m, wrapUps: [...m.wrapUps, { color: '#facc15', time: 30, sound: 'bell' }] }))}
+              >+ Add Wrap Up Action</button>
+            </div>
+            <div className="flex justify-end gap-4 mt-8">
+              <button
+                className="px-6 py-3 rounded-lg bg-gray-700 text-gray-300 hover:bg-gray-600 border border-gray-600 text-lg"
                 onClick={() => setEditingTimer(null)}
               >
                 Cancel
               </button>
               <button
-                className="px-4 py-2 rounded bg-blue-700 text-white hover:bg-blue-800 border border-blue-600"
+                className="px-6 py-3 rounded-lg bg-blue-700 text-white hover:bg-blue-800 border border-blue-600 text-lg font-bold"
                 onClick={() => {
                   setTimers(prev => prev.map(t => t.id === editingTimer.id ? { ...t, name: editingTimer.name, duration: editingTimer.duration } : t));
                   setEditingTimer(null);
                 }}
               >
-                Save
+                Confirm
               </button>
             </div>
           </div>

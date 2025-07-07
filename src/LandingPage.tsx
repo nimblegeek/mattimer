@@ -1,8 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export default function LandingPage() {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
+
+  const handleTry = () => {
+    setLoading(true);
+    setProgress(0);
+    let prog = 0;
+    const interval = setInterval(() => {
+      prog += Math.random() * 20 + 10;
+      if (prog >= 100) {
+        setProgress(100);
+        clearInterval(interval);
+        setTimeout(() => navigate('/app'), 400);
+      } else {
+        setProgress(prog);
+      }
+    }, 200);
+  };
+
   return (
     <div className="min-h-screen bg-black text-white flex flex-col">
       {/* Hero Section */}
@@ -13,7 +32,8 @@ export default function LandingPage() {
         </p>
         <button
           className="px-10 py-4 bg-blue-700 hover:bg-blue-800 text-white text-2xl font-bold rounded-lg shadow-lg border border-blue-600 mb-12"
-          onClick={() => navigate('/app')}
+          onClick={handleTry}
+          disabled={loading}
         >
           Try it for Free
         </button>
@@ -40,6 +60,18 @@ export default function LandingPage() {
       <footer className="py-6 text-center text-gray-500 border-t border-gray-800">
         &copy; {new Date().getFullYear()} BJJ Timer. Made for the Jiu-Jitsu community.
       </footer>
+      {/* Loading Overlay */}
+      {loading && (
+        <div className="fixed inset-0 bg-black/90 flex flex-col items-center justify-center z-50">
+          <div className="text-2xl md:text-3xl font-bold mb-8 text-white">Loading MatTimer in your browser…</div>
+          <div className="w-64 h-4 bg-gray-800 rounded-full overflow-hidden border border-gray-700">
+            <div
+              className="h-full bg-blue-600 transition-all duration-200"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 } 
