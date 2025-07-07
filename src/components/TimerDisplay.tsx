@@ -11,6 +11,7 @@ interface TimerDisplayProps {
   onStop: () => void;
   timerName: string;
   phase: 'ready' | 'active' | 'rest' | 'finished';
+  fullscreen?: boolean;
 }
 
 export default function TimerDisplay({ 
@@ -22,7 +23,8 @@ export default function TimerDisplay({
   onReset, 
   onStop,
   timerName,
-  phase 
+  phase,
+  fullscreen = false
 }: TimerDisplayProps) {
   const formatTime = (seconds: number) => {
     const mins = Math.floor(Math.abs(seconds) / 60);
@@ -52,57 +54,60 @@ export default function TimerDisplay({
   };
 
   return (
-    <div className={`${getBackgroundColor()} rounded-lg p-8 border-2 transition-all duration-300 shadow-lg`}>
+    <div className={
+      `${getBackgroundColor()} rounded-lg border-2 transition-all duration-300 shadow-lg ` +
+      (fullscreen ? 'w-full h-full flex flex-col justify-center items-center p-0 m-0' : 'p-8')
+    }>
       <div className="text-center">
         <div className="mb-6">
-          <h2 className="text-3xl font-bold text-white mb-2">{timerName}</h2>
+          <h2 className={`${fullscreen ? 'text-6xl mb-8' : 'text-3xl mb-2'} font-bold text-white`}>{timerName}</h2>
           <div className={`text-sm font-semibold uppercase tracking-wider ${getPhaseColor()} bg-gray-800 px-3 py-1 rounded-lg inline-block`}>
             {phase}
           </div>
         </div>
         
-        <div className={`text-8xl md:text-9xl font-mono font-bold mb-8 ${getPhaseColor()} transition-colors duration-200 drop-shadow-lg`}>
+        <div className={`${fullscreen ? 'text-[16vw] md:text-[12vw] mb-16' : 'text-8xl md:text-9xl mb-8'} font-mono font-bold ${getPhaseColor()} transition-colors duration-200 drop-shadow-lg`}>
           {formatTime(time)}
         </div>
 
-        <div className="flex justify-center gap-4 mb-8">
+        <div className={`flex justify-center gap-4 ${fullscreen ? 'mb-16' : 'mb-8'}`}>
           <button
             onClick={isRunning ? onPause : onStart}
-            className={`p-5 rounded-lg transition-all duration-200 hover:scale-105 shadow-lg border-2 ${
+            className={`transition-all duration-200 hover:scale-105 shadow-lg border-2 rounded-lg ${fullscreen ? 'p-10 text-4xl' : 'p-5'} ${
               isRunning 
                 ? 'bg-orange-600 hover:bg-orange-700 border-orange-500' 
                 : 'bg-green-600 hover:bg-green-700 border-green-500'
             }`}
           >
-            {isRunning ? <Pause size={28} /> : <Play size={28} />}
+            {isRunning ? <Pause size={fullscreen ? 56 : 28} /> : <Play size={fullscreen ? 56 : 28} />}
           </button>
           
           <button
             onClick={onReset}
-            className="p-5 rounded-lg bg-blue-600 hover:bg-blue-700 transition-all duration-200 hover:scale-105 shadow-lg border-2 border-blue-500"
+            className={`bg-blue-600 hover:bg-blue-700 transition-all duration-200 hover:scale-105 shadow-lg border-2 border-blue-500 rounded-lg ${fullscreen ? 'p-10 text-4xl' : 'p-5'}`}
           >
-            <RotateCcw size={28} />
+            <RotateCcw size={fullscreen ? 56 : 28} />
           </button>
           
           <button
             onClick={onStop}
-            className="p-5 rounded-lg bg-red-600 hover:bg-red-700 transition-all duration-200 hover:scale-105 shadow-lg border-2 border-red-500"
+            className={`bg-red-600 hover:bg-red-700 transition-all duration-200 hover:scale-105 shadow-lg border-2 border-red-500 rounded-lg ${fullscreen ? 'p-10 text-4xl' : 'p-5'}`}
           >
-            <Square size={28} />
+            <Square size={fullscreen ? 56 : 28} />
           </button>
         </div>
 
         <div className="flex justify-center gap-3">
-          <button className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors text-sm border border-gray-600 font-medium">
+          <button className={`${fullscreen ? 'px-8 py-4 text-2xl' : 'px-4 py-2 text-sm'} bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors border border-gray-600 font-medium`}>
             -1m
           </button>
-          <button className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors text-sm border border-gray-600 font-medium">
+          <button className={`${fullscreen ? 'px-8 py-4 text-2xl' : 'px-4 py-2 text-sm'} bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors border border-gray-600 font-medium`}>
             -10s
           </button>
-          <button className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors text-sm border border-gray-600 font-medium">
+          <button className={`${fullscreen ? 'px-8 py-4 text-2xl' : 'px-4 py-2 text-sm'} bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors border border-gray-600 font-medium`}>
             +10s
           </button>
-          <button className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors text-sm border border-gray-600 font-medium">
+          <button className={`${fullscreen ? 'px-8 py-4 text-2xl' : 'px-4 py-2 text-sm'} bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors border border-gray-600 font-medium`}>
             +1m
           </button>
         </div>
