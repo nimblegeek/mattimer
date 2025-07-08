@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import TimerDisplay from './components/TimerDisplay';
 import { useTimer } from './hooks/useTimer';
-import { Plus, Play, Pause, RotateCcw, Square, Wifi, Monitor, Smartphone, Settings, Trash2 } from 'lucide-react';
+import { Plus, Play, Pause, RotateCcw, Square, Wifi, Monitor, Smartphone, Settings, Trash2, X } from 'lucide-react';
 import Navbar from './components/Navbar';
 
 interface Timer {
@@ -354,10 +354,11 @@ export default function TimerDashboard() {
       {timerFullscreen && activeTimer && (
         <div className="fixed inset-0 z-50 bg-black flex items-center justify-center">
           <button
-            className="absolute top-6 right-8 px-6 py-3 rounded bg-gray-800 text-gray-300 hover:bg-gray-700 border border-gray-600 text-xl z-50"
+            className="absolute top-4 right-4 sm:top-6 sm:right-8 p-2 sm:p-3 rounded-full bg-gray-800 text-gray-300 hover:bg-gray-700 border border-gray-600 z-50 shadow-lg transition-colors"
             onClick={() => setTimerFullscreen(false)}
+            aria-label="Close fullscreen timer"
           >
-            Close
+            <X size={32} />
           </button>
           <div className="w-full h-full flex items-center justify-center">
             <div className="w-full h-full flex items-center justify-center">

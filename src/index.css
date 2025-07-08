@@ -13,3 +13,19 @@ body {
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@media (max-width: 639px) {
+  .mobile-timer-number {
+    text-shadow: 0 2px 16px rgba(0,0,0,0.7), 0 0 2px #fff;
+    letter-spacing: 0.04em;
+    font-weight: 900;
+    filter: brightness(1.2) contrast(1.2);
+  }
+  .mobile-timer-btn {
+    min-width: 36px;
+    min-height: 36px;
+    padding: 0.25rem !important;
+    font-size: 1rem !important;
+    border-radius: 0.5rem !important;
+  }
+}
