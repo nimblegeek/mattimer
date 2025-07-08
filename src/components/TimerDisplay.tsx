@@ -58,9 +58,9 @@ export default function TimerDisplay({
   return (
     <div className={
       `${getBackgroundColor()} rounded-lg border-2 transition-all duration-300 shadow-lg ` +
-      (fullscreen ? 'w-full h-full flex flex-col justify-center items-center p-0 m-0' : 'p-8')
+      (fullscreen ? 'w-full h-full flex flex-col justify-center items-center p-0 m-0' : 'p-4 md:p-8')
     }>
-      <div className="text-center">
+      <div className="text-center w-full flex flex-col items-center">
         <div className="mb-6">
           <h2 className={`${fullscreen ? 'text-6xl mb-8' : 'text-3xl mb-2'} font-bold text-white`}>{timerName}</h2>
           <div className={`text-sm font-semibold uppercase tracking-wider ${getPhaseColor()} bg-gray-800 px-3 py-1 rounded-lg inline-block`}>
@@ -68,14 +68,22 @@ export default function TimerDisplay({
           </div>
         </div>
         
-        <div className={`${fullscreen ? 'text-[16vw] md:text-[12vw] mb-16' : 'text-8xl md:text-9xl mb-8'} font-mono font-bold ${getPhaseColor()} transition-colors duration-200 drop-shadow-lg`}>
+        <div
+          className={
+            (fullscreen
+              ? 'text-[20vw] md:text-[12vw] mb-16'
+              : 'text-[16vw] sm:text-[10vw] md:text-9xl mb-8') +
+            ' font-mono font-bold ' + getPhaseColor() + ' transition-colors duration-200 drop-shadow-lg w-full text-center'
+          }
+          style={{ lineHeight: 1 }}
+        >
           {formatTime(time)}
         </div>
 
-        <div className={`flex justify-center gap-4 ${fullscreen ? 'mb-16' : 'mb-8'}`}>
+        <div className={`flex flex-col sm:flex-row justify-center items-center gap-2 sm:gap-4 ${fullscreen ? 'mb-16' : 'mb-8'}`}>
           <button
             onClick={isRunning ? onPause : onStart}
-            className={`transition-all duration-200 hover:scale-105 shadow-lg border-2 rounded-lg ${fullscreen ? 'p-10 text-4xl' : 'p-5'} ${
+            className={`transition-all duration-200 hover:scale-105 shadow-lg border-2 rounded-lg ${fullscreen ? 'p-10 text-4xl' : 'p-3 sm:p-5'} ${
               isRunning 
                 ? 'bg-orange-600 hover:bg-orange-700 border-orange-500' 
                 : 'bg-green-600 hover:bg-green-700 border-green-500'
@@ -83,43 +91,41 @@ export default function TimerDisplay({
           >
             {isRunning ? <Pause size={fullscreen ? 56 : 28} /> : <Play size={fullscreen ? 56 : 28} />}
           </button>
-          
           <button
             onClick={onReset}
-            className={`bg-blue-600 hover:bg-blue-700 transition-all duration-200 hover:scale-105 shadow-lg border-2 border-blue-500 rounded-lg ${fullscreen ? 'p-10 text-4xl' : 'p-5'}`}
+            className={`bg-blue-600 hover:bg-blue-700 transition-all duration-200 hover:scale-105 shadow-lg border-2 border-blue-500 rounded-lg ${fullscreen ? 'p-10 text-4xl' : 'p-3 sm:p-5'}`}
           >
             <RotateCcw size={fullscreen ? 56 : 28} />
           </button>
-          
           <button
             onClick={onStop}
-            className={`bg-red-600 hover:bg-red-700 transition-all duration-200 hover:scale-105 shadow-lg border-2 border-red-500 rounded-lg ${fullscreen ? 'p-10 text-4xl' : 'p-5'}`}
+            className={`bg-red-600 hover:bg-red-700 transition-all duration-200 hover:scale-105 shadow-lg border-2 border-red-500 rounded-lg ${fullscreen ? 'p-10 text-4xl' : 'p-3 sm:p-5'}`}
           >
             <Square size={fullscreen ? 56 : 28} />
           </button>
         </div>
 
-        <div className="flex justify-center gap-3">
+        <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mt-2">
           <button
-            className={`${fullscreen ? 'px-8 py-4 text-2xl' : 'px-4 py-2 text-sm'} bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors border border-gray-600 font-medium`}
+            className={`${fullscreen ? 'px-8 py-4 text-2xl' : 'px-3 py-2 text-xs sm:text-sm'} bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors border border-gray-600 font-medium`}
             onClick={() => adjustTime && adjustTime(-60)}
           >
             -1m
           </button>
           <button
-            className={`${fullscreen ? 'px-8 py-4 text-2xl' : 'px-4 py-2 text-sm'} bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors border border-gray-600 font-medium`}
+            className={`${fullscreen ? 'px-8 py-4 text-2xl' : 'px-3 py-2 text-xs sm:text-sm'} bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors border border-gray-600 font-medium`}
             onClick={() => adjustTime && adjustTime(-30)}
           >
             -30s
           </button>
           <button
-            className={`${fullscreen ? 'px-8 py-4 text-2xl' : 'px-4 py-2 text-sm'} bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors border border-gray-600 font-medium`}
+            className={`${fullscreen ? 'px-8 py-4 text-2xl' : 'px-3 py-2 text-xs sm:text-sm'} bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors border border-gray-600 font-medium`}
             onClick={() => adjustTime && adjustTime(30)}
           >
             +30s
           </button>
           <button
-            className={`${fullscreen ? 'px-8 py-4 text-2xl' : 'px-4 py-2 text-sm'} bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors border border-gray-600 font-medium`}
+            className={`${fullscreen ? 'px-8 py-4 text-2xl' : 'px-3 py-2 text-xs sm:text-sm'} bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors border border-gray-600 font-medium`}
             onClick={() => adjustTime && adjustTime(60)}
           >
             +1m
