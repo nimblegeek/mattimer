@@ -7,7 +7,8 @@ import Navbar from './components/Navbar';
 interface Timer {
   id: string;
   name: string;
-  duration: number;
+  workDuration: number; // in seconds
+  restDuration: number; // in seconds
   isRunning: boolean;
   currentTime: number;
   type: 'boxing' | 'mma' | 'custom' | 'tabata';
@@ -28,8 +29,10 @@ export default function TimerDashboard() {
   const [editModal, setEditModal] = useState({
     startType: 'manual', // 'manual' or 'scheduled'
     scheduledTime: '',
-    durationMins: 10,
-    durationSecs: 0,
+    workMins: 10,
+    workSecs: 0,
+    restMins: 1,
+    restSecs: 0,
     wrapUps: [
       { color: '#facc15', time: 30, sound: 'bell' },
     ],
@@ -66,7 +69,7 @@ export default function TimerDashboard() {
   ];
 
   const activeTimer = timers.find(t => t.id === activeTimerId);
-  const mainTimer = useTimer(activeTimer?.duration || 0);
+  const mainTimer = useTimer(activeTimer?.workDuration || 0, activeTimer?.restDuration || 0);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -77,7 +80,7 @@ export default function TimerDashboard() {
 
   useEffect(() => {
     if (activeTimer) {
-      mainTimer.setTime(activeTimer.duration);
+      mainTimer.setTime(activeTimer.workDuration, activeTimer.restDuration);
     }
   }, [activeTimerId, activeTimer]);
 
@@ -85,9 +88,10 @@ export default function TimerDashboard() {
     const newTimer: Timer = {
       id: Date.now().toString(),
       name: preset?.name || `Timer ${timers.length + 1}`,
-      duration: preset?.duration || 600,
+      workDuration: preset?.workDuration || 600,
+      restDuration: preset?.restDuration || 60,
       isRunning: false,
-      currentTime: preset?.duration || 600,
+      currentTime: preset?.workDuration || 600,
       type: preset?.type || 'custom'
     };
     setTimers(prev => [...prev, newTimer]);
@@ -205,7 +209,7 @@ export default function TimerDashboard() {
               <div key={timer.id} className={`flex items-center gap-2 p-3 border ${activeTimerId === timer.id ? 'border-sc_yellow bg-sc_card' : 'border-sc_card bg-sc_panel'} transition-colors`}> 
                 <div className="flex-1 flex flex-col gap-1">
                   <div className="font-semibold text-sc_white">{timer.name}</div>
-                  <div className="text-xs text-sc_gray">{Math.floor(timer.duration / 60)}:{(timer.duration % 60).toString().padStart(2, '0')}</div>
+                  <div className="text-xs text-sc_gray">Work: {Math.floor(timer.workDuration / 60)}:{(timer.workDuration % 60).toString().padStart(2, '0')} | Rest: {Math.floor(timer.restDuration / 60)}:{(timer.restDuration % 60).toString().padStart(2, '0')}</div>
                 </div>
                 <button onClick={() => toggleTimer(timer.id)} className={`p-2 rounded border ${timer.isRunning ? 'bg-sc_yellow border-sc_yellow text-sc_card' : 'bg-sc_green border-sc_green text-sc_card'} hover:opacity-90`}>
                   {timer.isRunning ? <Pause size={16} /> : <Play size={16} />}
@@ -252,16 +256,16 @@ export default function TimerDashboard() {
                 )}
               </div>
               <div className="flex-1">
-                <label className="block text-gray-400 mb-2 font-semibold">Duration</label>
-                <div className="flex gap-2">
+                <label className="block text-gray-400 mb-2 font-semibold">Work Duration</label>
+                <div className="flex gap-2 mb-2">
                   <input
                     type="number"
                     min={0}
                     className="w-20 px-4 py-3 rounded bg-gray-800 border border-gray-700 text-white focus:outline-none focus:border-blue-500 text-lg text-right"
-                    value={Math.floor(editingTimer.duration / 60)}
+                    value={Math.floor(editingTimer.workDuration / 60)}
                     onChange={e => {
                       const mins = parseInt(e.target.value, 10) || 0;
-                      setEditingTimer({ ...editingTimer, duration: mins * 60 + (editingTimer.duration % 60) });
+                      setEditingTimer({ ...editingTimer, workDuration: mins * 60 + (editingTimer.workDuration % 60) });
                     }}
                   />
                   <span className="text-lg text-gray-400 self-center">:</span>
@@ -270,11 +274,37 @@ export default function TimerDashboard() {
                     min={0}
                     max={59}
                     className="w-20 px-4 py-3 rounded bg-gray-800 border border-gray-700 text-white focus:outline-none focus:border-blue-500 text-lg text-right"
-                    value={(editingTimer.duration % 60).toString().padStart(2, '0')}
+                    value={(editingTimer.workDuration % 60).toString().padStart(2, '0')}
                     onChange={e => {
                       let secs = parseInt(e.target.value, 10) || 0;
                       if (secs > 59) secs = 59;
-                      setEditingTimer({ ...editingTimer, duration: Math.floor(editingTimer.duration / 60) * 60 + secs });
+                      setEditingTimer({ ...editingTimer, workDuration: Math.floor(editingTimer.workDuration / 60) * 60 + secs });
+                    }}
+                  />
+                </div>
+                <label className="block text-gray-400 mb-2 font-semibold">Rest Duration</label>
+                <div className="flex gap-2">
+                  <input
+                    type="number"
+                    min={0}
+                    className="w-20 px-4 py-3 rounded bg-gray-800 border border-gray-700 text-white focus:outline-none focus:border-blue-500 text-lg text-right"
+                    value={Math.floor(editingTimer.restDuration / 60)}
+                    onChange={e => {
+                      const mins = parseInt(e.target.value, 10) || 0;
+                      setEditingTimer({ ...editingTimer, restDuration: mins * 60 + (editingTimer.restDuration % 60) });
+                    }}
+                  />
+                  <span className="text-lg text-gray-400 self-center">:</span>
+                  <input
+                    type="number"
+                    min={0}
+                    max={59}
+                    className="w-20 px-4 py-3 rounded bg-gray-800 border border-gray-700 text-white focus:outline-none focus:border-blue-500 text-lg text-right"
+                    value={(editingTimer.restDuration % 60).toString().padStart(2, '0')}
+                    onChange={e => {
+                      let secs = parseInt(e.target.value, 10) || 0;
+                      if (secs > 59) secs = 59;
+                      setEditingTimer({ ...editingTimer, restDuration: Math.floor(editingTimer.restDuration / 60) * 60 + secs });
                     }}
                   />
                 </div>
@@ -340,7 +370,7 @@ export default function TimerDashboard() {
               <button
                 className="px-6 py-3 rounded-lg bg-blue-700 text-white hover:bg-blue-800 border border-blue-600 text-lg font-bold"
                 onClick={() => {
-                  setTimers(prev => prev.map(t => t.id === editingTimer.id ? { ...t, name: editingTimer.name, duration: editingTimer.duration } : t));
+                  setTimers(prev => prev.map(t => t.id === editingTimer.id ? { ...t, name: editingTimer.name, workDuration: editingTimer.workDuration, restDuration: editingTimer.restDuration } : t));
                   setEditingTimer(null);
                 }}
               >

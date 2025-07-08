@@ -5,14 +5,18 @@ interface TimerState {
   isRunning: boolean;
   initialTime: number;
   phase: 'ready' | 'active' | 'rest' | 'finished';
+  workDuration: number;
+  restDuration: number;
 }
 
-export function useTimer(initialTime: number = 0) {
+export function useTimer(workDuration: number = 0, restDuration: number = 0) {
   const [timerState, setTimerState] = useState<TimerState>({
-    time: initialTime,
+    time: workDuration,
     isRunning: false,
-    initialTime,
-    phase: 'ready'
+    initialTime: workDuration,
+    phase: 'ready',
+    workDuration,
+    restDuration
   });
 
   useEffect(() => {
@@ -23,17 +27,34 @@ export function useTimer(initialTime: number = 0) {
         setTimerState(prev => {
           const newTime = prev.time - 1;
           let newPhase = prev.phase;
-          
+          // Work/rest logic
           if (newTime <= 0) {
-            newPhase = 'finished';
-            return {
-              ...prev,
-              time: 0,
-              isRunning: false,
-              phase: newPhase
-            };
+            if (prev.phase === 'active') {
+              // Switch to rest
+              return {
+                ...prev,
+                time: prev.restDuration,
+                phase: 'rest',
+                isRunning: prev.restDuration > 0
+              };
+            } else if (prev.phase === 'rest') {
+              // Finish after rest
+              return {
+                ...prev,
+                time: 0,
+                isRunning: false,
+                phase: 'finished'
+              };
+            } else {
+              // Already finished
+              return {
+                ...prev,
+                time: 0,
+                isRunning: false,
+                phase: 'finished'
+              };
+            }
           }
-          
           return {
             ...prev,
             time: newTime,
@@ -64,7 +85,7 @@ export function useTimer(initialTime: number = 0) {
   const reset = useCallback(() => {
     setTimerState(prev => ({
       ...prev,
-      time: prev.initialTime,
+      time: prev.workDuration,
       isRunning: false,
       phase: 'ready'
     }));
@@ -73,17 +94,19 @@ export function useTimer(initialTime: number = 0) {
   const stop = useCallback(() => {
     setTimerState(prev => ({
       ...prev,
-      time: prev.initialTime,
+      time: prev.workDuration,
       isRunning: false,
       phase: 'ready'
     }));
   }, []);
 
-  const setTime = useCallback((time: number) => {
+  const setTime = useCallback((work: number, rest: number) => {
     setTimerState(prev => ({
       ...prev,
-      time,
-      initialTime: time,
+      time: work,
+      initialTime: work,
+      workDuration: work,
+      restDuration: rest,
       phase: 'ready'
     }));
   }, []);

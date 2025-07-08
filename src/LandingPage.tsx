@@ -63,7 +63,7 @@ export default function LandingPage() {
       </div>
       {/* Footer */}
       <footer className="py-6 text-center text-gray-500 border-t border-gray-800">
-        &copy; {new Date().getFullYear()} BJJ Timer. Made for the Jiu-Jitsu community.
+        &copy; {new Date().getFullYear()} MatTimer.com. Made for the Jiu-Jitsu community.
       </footer>
       {/* Loading Overlay */}
       {loading && (
