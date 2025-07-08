@@ -28,7 +28,10 @@ export default function LandingPage() {
       <Navbar />
       {/* Hero Section */}
       <div className="flex-1 flex flex-col items-center justify-center px-4">
-        <h1 className="text-5xl md:text-6xl font-extrabold mb-6 text-center">Remote controlled timer for martial artists</h1>
+        <h1 className="text-5xl md:text-6xl font-extrabold mb-6 text-center">
+          Remote-controlled timer for 
+          <span className="font-black" style={{ color: '#60A5FA' }}> martial artists</span>
+        </h1>
         <p className="text-xl md:text-2xl text-gray-400 mb-10 text-center max-w-2xl">
           Take your BJJ rounds, sparring, and classes to the next level with a beautiful, customizable, and distraction-free timer app built for the grappling community.
         </p>

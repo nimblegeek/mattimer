@@ -14,6 +14,9 @@ export default {
         sc_gray: '#a1a1aa', // muted gray
         sc_white: '#f4f4f5', // off-white
       },
+      fontFamily: {
+        sans: ['Circular', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'Noto Sans', 'sans-serif'],
+      },
     },
   },
   plugins: [],
