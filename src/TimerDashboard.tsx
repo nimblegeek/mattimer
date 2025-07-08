@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import TimerDisplay from './components/TimerDisplay';
 import { useTimer } from './hooks/useTimer';
 import { Plus, Play, Pause, RotateCcw, Square, Wifi, Monitor, Smartphone, Settings, Trash2 } from 'lucide-react';
+import Navbar from './components/Navbar';
 
 interface Timer {
   id: string;
@@ -131,22 +132,12 @@ export default function TimerDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col">
-      {/* Header */}
-      <div className="w-full bg-gray-900 border-b border-gray-800 px-6 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <span className="text-xl font-bold tracking-tight">MyTimer Dashboard</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <button className="px-3 py-1 bg-gray-800 border border-gray-700 rounded text-sm hover:bg-gray-700">Customize</button>
-          <button className="px-3 py-1 bg-gray-800 border border-gray-700 rounded text-sm hover:bg-gray-700">Share</button>
-          <button className="px-3 py-1 bg-gray-800 border border-gray-700 rounded text-sm hover:bg-gray-700">Save</button>
-        </div>
-      </div>
+    <div className="min-h-screen bg-sc_bg text-sc_white flex flex-col">
+      <Navbar />
       {/* Main Content */}
       <div className="flex flex-1 overflow-hidden">
         {/* Left Panel: Timer Display and Controls */}
-        <div className="flex flex-col w-full md:w-2/3 lg:w-3/5 xl:w-1/2 bg-black border-r border-gray-800 p-8 gap-6">
+        <div className="flex flex-col w-full md:w-2/3 lg:w-3/5 xl:w-1/2 bg-sc_bg border-r border-sc_panel p-8 gap-6">
           {/* Large Timer Display */}
           <div className="flex-1 flex flex-col items-center justify-center">
             {activeTimer ? (
@@ -162,37 +153,38 @@ export default function TimerDashboard() {
                     onStop={mainTimer.stop}
                     timerName={activeTimer.name}
                     phase={mainTimer.phase}
+                    adjustTime={mainTimer.adjustTime}
                   />
-                  <div className="text-xs text-gray-500 text-center mt-2">Click timer to expand</div>
+                  <div className="text-xs text-sc_gray text-center mt-2">Click timer to expand</div>
                 </div>
               </>
             ) : (
               <div className="flex flex-col items-center justify-center h-full">
-                <div className="text-6xl font-mono font-extrabold text-gray-700 mb-4 select-none">00:00</div>
-                <div className="text-lg text-gray-500 mb-6">No Timer Selected</div>
-                <button onClick={() => addTimer()} className="px-6 py-3 bg-blue-700 hover:bg-blue-800 rounded border border-blue-600 text-lg font-semibold">Create Timer</button>
+                <div className="text-6xl font-mono font-extrabold text-sc_gray mb-4 select-none">00:00</div>
+                <div className="text-lg text-sc_gray mb-6">No Timer Selected</div>
+                <button onClick={() => addTimer()} className="px-6 py-3 bg-sc_green hover:bg-green-500 rounded border border-sc_green text-lg font-semibold text-sc_card">Create Timer</button>
               </div>
             )}
           </div>
           {/* Local Time and Devices */}
           <div className="flex flex-col gap-2 mt-auto">
-            <div className="flex items-center gap-2 text-gray-400 text-sm">
+            <div className="flex items-center gap-2 text-sc_gray text-sm">
               <span>{formatTime(currentTime)}</span>
-              <span className="text-xs text-gray-600">{Intl.DateTimeFormat().resolvedOptions().timeZone}</span>
+              <span className="text-xs text-sc_gray">{Intl.DateTimeFormat().resolvedOptions().timeZone}</span>
             </div>
             {/* Connected Devices Panel */}
-            <div className="bg-gray-900 border border-gray-800 mt-2 p-3">
+            <div className="bg-sc_panel border border-sc_card mt-2 p-3">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-semibold text-gray-400">Connected Devices</span>
-                <span className="text-xs text-gray-500">{devices.filter(d => d.isConnected).length}/{devices.length}</span>
+                <span className="text-xs font-semibold text-sc_gray">Connected Devices</span>
+                <span className="text-xs text-sc_gray">{devices.filter(d => d.isConnected).length}/{devices.length}</span>
               </div>
               <div className="space-y-1">
                 {devices.map(device => (
-                  <div key={device.id} className="flex items-center gap-2 text-xs text-gray-300">
-                    <span className={`w-2 h-2 rounded-full ${device.isConnected ? 'bg-green-400' : 'bg-gray-600'}`}></span>
+                  <div key={device.id} className="flex items-center gap-2 text-xs text-sc_gray">
+                    <span className={`w-2 h-2 rounded-full ${device.isConnected ? 'bg-sc_green' : 'bg-sc_gray'}`}></span>
                     {getDeviceIcon(device.type)}
                     <span>{device.name}</span>
-                    <span className="text-gray-500 ml-auto">{device.isConnected ? 'Online' : 'Last seen ' + device.lastSeen.toLocaleTimeString()}</span>
+                    <span className="text-sc_gray ml-auto">{device.isConnected ? 'Online' : 'Last seen ' + device.lastSeen.toLocaleTimeString()}</span>
                   </div>
                 ))}
               </div>
@@ -200,26 +192,26 @@ export default function TimerDashboard() {
           </div>
         </div>
         {/* Right Panel: Timer List */}
-        <div className="flex flex-col w-80 min-w-[320px] bg-black p-6 gap-4 overflow-y-auto border-l border-gray-800">
+        <div className="flex flex-col w-80 min-w-[320px] bg-sc_panel p-6 gap-4 overflow-y-auto border-l border-sc_card">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-lg font-semibold text-gray-200">Timers</span>
-            <button onClick={() => addTimer()} className="flex items-center gap-1 px-3 py-1 bg-blue-700 hover:bg-blue-800 border border-blue-600 rounded text-sm font-medium"><Plus size={16} /> Add Timer</button>
+            <span className="text-lg font-semibold text-sc_white">Timers</span>
+            <button onClick={() => addTimer()} className="flex items-center gap-1 px-3 py-1 bg-sc_green hover:bg-green-500 border border-sc_green rounded text-sm font-medium text-sc_card"><Plus size={16} /> Add Timer</button>
           </div>
           <div className="flex flex-col gap-2">
             {timers.length === 0 && (
-              <div className="text-gray-500 text-sm text-center py-8">No timers yet.</div>
+              <div className="text-sc_gray text-sm text-center py-8">No timers yet.</div>
             )}
             {timers.map(timer => (
-              <div key={timer.id} className={`flex items-center gap-2 p-3 border ${activeTimerId === timer.id ? 'border-blue-500 bg-blue-900/20' : 'border-gray-800 bg-gray-900'} transition-colors`}> 
+              <div key={timer.id} className={`flex items-center gap-2 p-3 border ${activeTimerId === timer.id ? 'border-sc_yellow bg-sc_card' : 'border-sc_card bg-sc_panel'} transition-colors`}> 
                 <div className="flex-1 flex flex-col gap-1">
-                  <div className="font-semibold text-gray-100">{timer.name}</div>
-                  <div className="text-xs text-gray-400">{Math.floor(timer.duration / 60)}:{(timer.duration % 60).toString().padStart(2, '0')}</div>
+                  <div className="font-semibold text-sc_white">{timer.name}</div>
+                  <div className="text-xs text-sc_gray">{Math.floor(timer.duration / 60)}:{(timer.duration % 60).toString().padStart(2, '0')}</div>
                 </div>
-                <button onClick={() => toggleTimer(timer.id)} className={`p-2 rounded border ${timer.isRunning ? 'bg-orange-700 border-orange-600 text-orange-200' : 'bg-green-700 border-green-600 text-green-200'} hover:opacity-90`}>
+                <button onClick={() => toggleTimer(timer.id)} className={`p-2 rounded border ${timer.isRunning ? 'bg-sc_yellow border-sc_yellow text-sc_card' : 'bg-sc_green border-sc_green text-sc_card'} hover:opacity-90`}>
                   {timer.isRunning ? <Pause size={16} /> : <Play size={16} />}
                 </button>
-                <button onClick={() => deleteTimer(timer.id)} className="p-2 rounded border bg-red-700 border-red-600 text-red-200 hover:opacity-90"><Trash2 size={16} /></button>
-                <button onClick={() => setEditingTimer(timer)} className="p-2 rounded border bg-gray-800 border-gray-700 text-gray-400 hover:opacity-90"><Settings size={16} /></button>
+                <button onClick={() => deleteTimer(timer.id)} className="p-2 rounded border bg-sc_red border-sc_red text-sc_card hover:opacity-90"><Trash2 size={16} /></button>
+                <button onClick={() => setEditingTimer(timer)} className="p-2 rounded border bg-sc_card border-sc_gray text-sc_gray hover:opacity-90"><Settings size={16} /></button>
               </div>
             ))}
           </div>
@@ -380,6 +372,7 @@ export default function TimerDashboard() {
                 timerName={activeTimer.name}
                 phase={mainTimer.phase}
                 fullscreen={true}
+                adjustTime={mainTimer.adjustTime}
               />
             </div>
           </div>

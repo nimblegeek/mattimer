@@ -12,6 +12,7 @@ interface TimerDisplayProps {
   timerName: string;
   phase: 'ready' | 'active' | 'rest' | 'finished';
   fullscreen?: boolean;
+  adjustTime?: (adjustment: number) => void;
 }
 
 export default function TimerDisplay({ 
@@ -24,7 +25,8 @@ export default function TimerDisplay({
   onStop,
   timerName,
   phase,
-  fullscreen = false
+  fullscreen = false,
+  adjustTime
 }: TimerDisplayProps) {
   const formatTime = (seconds: number) => {
     const mins = Math.floor(Math.abs(seconds) / 60);
@@ -98,16 +100,28 @@ export default function TimerDisplay({
         </div>
 
         <div className="flex justify-center gap-3">
-          <button className={`${fullscreen ? 'px-8 py-4 text-2xl' : 'px-4 py-2 text-sm'} bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors border border-gray-600 font-medium`}>
+          <button
+            className={`${fullscreen ? 'px-8 py-4 text-2xl' : 'px-4 py-2 text-sm'} bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors border border-gray-600 font-medium`}
+            onClick={() => adjustTime && adjustTime(-60)}
+          >
             -1m
           </button>
-          <button className={`${fullscreen ? 'px-8 py-4 text-2xl' : 'px-4 py-2 text-sm'} bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors border border-gray-600 font-medium`}>
-            -10s
+          <button
+            className={`${fullscreen ? 'px-8 py-4 text-2xl' : 'px-4 py-2 text-sm'} bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors border border-gray-600 font-medium`}
+            onClick={() => adjustTime && adjustTime(-30)}
+          >
+            -30s
           </button>
-          <button className={`${fullscreen ? 'px-8 py-4 text-2xl' : 'px-4 py-2 text-sm'} bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors border border-gray-600 font-medium`}>
-            +10s
+          <button
+            className={`${fullscreen ? 'px-8 py-4 text-2xl' : 'px-4 py-2 text-sm'} bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors border border-gray-600 font-medium`}
+            onClick={() => adjustTime && adjustTime(30)}
+          >
+            +30s
           </button>
-          <button className={`${fullscreen ? 'px-8 py-4 text-2xl' : 'px-4 py-2 text-sm'} bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors border border-gray-600 font-medium`}>
+          <button
+            className={`${fullscreen ? 'px-8 py-4 text-2xl' : 'px-4 py-2 text-sm'} bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors border border-gray-600 font-medium`}
+            onClick={() => adjustTime && adjustTime(60)}
+          >
             +1m
           </button>
         </div>

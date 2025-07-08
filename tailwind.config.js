@@ -4,19 +4,15 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Tokyo Night Palette
-        tn_bg: '#1a1b26',
-        tn_bg_dark: '#16161e',
-        tn_panel: '#24283b',
-        tn_fg: '#c0caf5',
-        tn_fg_secondary: '#a9b1d6',
-        tn_fg_muted: '#565f89',
-        tn_blue: '#7aa2f7',
-        tn_purple: '#bb9af7',
-        tn_green: '#9ece6a',
-        tn_red: '#f7768e',
-        tn_yellow: '#e0af68',
-        tn_cyan: '#7dcfff',
+        // Smoothcomp-inspired palette
+        sc_bg: '#23242a', // main background
+        sc_panel: '#2c2d33', // panel background
+        sc_card: '#18181b', // card/score background
+        sc_yellow: '#e2b500', // highlight yellow
+        sc_green: '#4ade80', // positive/next
+        sc_red: '#f87171', // negative/end
+        sc_gray: '#a1a1aa', // muted gray
+        sc_white: '#f4f4f5', // off-white
       },
     },
   },

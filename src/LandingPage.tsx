@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Navbar from './components/Navbar';
 
 export default function LandingPage() {
   const navigate = useNavigate();
@@ -24,9 +25,10 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-black text-white flex flex-col">
+      <Navbar />
       {/* Hero Section */}
       <div className="flex-1 flex flex-col items-center justify-center px-4">
-        <h1 className="text-5xl md:text-6xl font-extrabold mb-6 text-center">BJJ Timer: The Ultimate Timer for Jiu-Jitsu Training</h1>
+        <h1 className="text-5xl md:text-6xl font-extrabold mb-6 text-center">Remote controlled timer for martial artists</h1>
         <p className="text-xl md:text-2xl text-gray-400 mb-10 text-center max-w-2xl">
           Take your BJJ rounds, sparring, and classes to the next level with a beautiful, customizable, and distraction-free timer app built for the grappling community.
         </p>
@@ -35,7 +37,7 @@ export default function LandingPage() {
           onClick={handleTry}
           disabled={loading}
         >
-          Try it for Free
+          Try it out for free in the browser
         </button>
         {/* Features */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl w-full mt-8">
